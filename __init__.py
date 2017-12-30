@@ -121,7 +121,7 @@ class Dimention(dict):
     def __prune(self):
         """remove useless indexes"""
         key_to_del = set()
-        for key, value in self.items():
+        for key, value in super(__class__,self).items():
             if not value: key_to_del.add(key)
         for key in key_to_del:
             super(__class__,self).__delitem__(key)
@@ -218,6 +218,7 @@ class Dimention(dict):
         ans = self.copy()
         for k,v in self.items():
             super(__class__,ans).__setitem__(k, v*value)
+        ans.__prune()
         return ans
 
     def __eq__(self,value):
@@ -405,13 +406,16 @@ class Quantity(object):
             return ans
         return wrapper
 
-    def convert(self, unit):
-        """Convert quantity in place from a unit to an other unit."""
+    def convert(self, unit=None):
+        """Convert quantity in place from a unit to an other unit.
+        If unit is not specified, convert to SI."""
+        if unit is None: unit = Unit(self.unit.dim)
         if self.unit is unit or self.unit == unit: return
         factor = (self.unit/unit).scale
         self.unit += unit
         if factor==1: return
         self.amount = _neatscale(self.amount*factor)
+        return self
     @_return_scalar
     def __add__(self, value):
         ans = self.copy()
@@ -420,11 +424,12 @@ class Quantity(object):
     def __iadd__(self, value):
         if isinstance(value, Unit):
             self.convert(value)
-            return
+            return self
         if not isinstance(value, __class__):
             value = __class__(value)
         self.convert(value.unit)
         self.amount += value.amount
+        return self
     @_return_scalar
     def __sub__(self, value):
         ans = self.copy()
@@ -433,11 +438,12 @@ class Quantity(object):
     def __isub__(self, value):
         if isinstance(value, Unit):
             self.convert(value)
-            return
+            return self
         if not isinstance(value, __class__):
             value = __class__(value)
         self.convert(value.unit)
         self.amount -= value.amount
+        return self
     @_return_scalar
     def __mul__(self, value):
         ans = self.copy()
@@ -446,11 +452,12 @@ class Quantity(object):
     def __imul__(self, value):
         if isinstance(value, Unit):
             self.unit *= value
-            return
+            return self
         if not isinstance(value, __class__):
             value = __class__(value)
         self.amount *= value.amount
         self.unit *= value.unit
+        return self
     @_return_scalar
     def __truediv__(self, value):
         ans = self.copy()
@@ -459,11 +466,12 @@ class Quantity(object):
     def __itruediv__(self, value):
         if isinstance(value, Unit):
             self.unit /= value
-            return
+            return self
         if not isinstance(value, __class__):
             value = __class__(value)
         self.amount /= value.amount
         self.unit /= value.unit
+        return self
     @_return_scalar
     def __pow__(self, value):
         ans = self.copy()
@@ -472,6 +480,7 @@ class Quantity(object):
     def __ipow__(self, value):
         self.amount **= value
         self.unit **= value
+        return self
 
     def __radd__(self, value):
         if not isinstance(value, (Unit,Quantity)):
