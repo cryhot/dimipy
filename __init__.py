@@ -107,7 +107,7 @@ Neutral.NEUTRAL = Neutral()
 # DIMENTION                                                                    #
 ################################################################################
 
-class Dimention(dict):
+class Dimension(dict):
     """Relates to a physical dimention. Should be immutable."""
     def __new__(cls, *args, **kwds):
         obj = super(__class__, cls).__new__(cls)
@@ -275,7 +275,7 @@ class Dimention(dict):
             for k,v in self.items()
         )
 
-Dimention.NODIM = Dimention()
+Dimension.NODIM = Dimension()
 
 
 ################################################################################
@@ -287,14 +287,14 @@ Dimention.NODIM = Dimention()
 )
 class Unit(object):
     """Describes a physical unit. Should be immutable."""
-    def __init__(self, *args, scale=Neutral.NEUTRAL, dim=Dimention.NODIM, **kwds):
+    def __init__(self, *args, scale=Neutral.NEUTRAL, dim=Dimension.NODIM, **kwds):
         """Create a new Unit with a dimention and a certain scale."""
-        if not isinstance(dim, Dimention):
-        	dim = Dimention(dim)
+        if not isinstance(dim, Dimension):
+        	dim = Dimension(dim)
         if kwds:
-            dim *= Dimention(**kwds)
+            dim *= Dimension(**kwds)
         for arg in args:
-            if isinstance(arg, Dimention):
+            if isinstance(arg, Dimension):
                 dim *= arg
             elif isinstance(arg, __class__):
                 scale *= arg.scale
@@ -319,10 +319,10 @@ class Unit(object):
         )
 
     def __add__(self, value):
-        self.dim + Dimention.dim_of(value)
+        self.dim + Dimension.dim_of(value)
         return value
     def __sub__(self, value):
-        self.dim - Dimention.dim_of(value)
+        self.dim - Dimension.dim_of(value)
         return -value
     def __mul__(self, value):
         if not isinstance(value, __class__):
@@ -379,14 +379,14 @@ Unit.SCALAR = Unit()
 
 @ordering(
     key=(lambda obj: (obj.unit.dim,obj.amount*obj.unit.scale)),
-    standard=(lambda other: Quantity(other) if not isinstance(other,(Dimention,Unit,Quantity)) else other),
+    standard=(lambda other: Quantity(other) if not isinstance(other,(Dimension,Unit,Quantity)) else other),
 )
 class Quantity(object):
     """Describes a certain amount of a given unit."""
     def __init__(self, *args, amount=Neutral.NEUTRAL, unit=Unit.SCALAR):
         """Create a new Unit with a dimention and a certain scale."""
         for arg in args:
-            if isinstance(arg, Dimention):
+            if isinstance(arg, Dimension):
                 raise TypeError(
                     "%s does not accept %s as argument" % (
                         self.__class__.__name__,
@@ -549,4 +549,4 @@ class Quantity(object):
     del _return_scalar
 
 
-__all__ = ["Dimention", "Unit", "Quantity"]
+__all__ = ["Dimension", "Unit", "Quantity"]

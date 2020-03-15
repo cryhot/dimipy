@@ -6,27 +6,29 @@ unit library for python3
 
 ## Content
 
-3 levels datastructure: ``Dimention`` - ``Unit`` - ``Quantity``
-- `Dimention`: relates to a physical dimention (immutable)
+3 levels datastructure: ``Dimension`` - ``Unit`` - ``Quantity``
+- `Dimension`: relates to a physical dimension (immutable)
 - `Unit`: describes a physical unit with it's scale (immutable)
 - `Quantity`: describes a certain amount of a given unit
 
 Basic rules for `Unit`, `Quantity` and other types operations:
-- an ordinary object is considered as a `Quantity` object whose Unit is `Unit.SCALAR` (no dimention, scale `1`)
-- if the result of an operation is a `Quantity` whose Unit has no dimention and scale `1` (i.e. equal to `Unit.SCALAR`), the result is substituted with the quantity itself
+- an ordinary object is considered as a `Quantity` object whose Unit is `Unit.SCALAR` (no dimension, scale `1`)
+- if the result of an operation is a `Quantity` whose Unit has no dimension and scale `1` (i.e. equal to `Unit.SCALAR`), the result is substituted with the quantity itself
 - the result of **(A \* B)** has the **type of A** (so n\*`Unit` is a `Quantity` but `Unit`\*n is a new `Unit`)
 - the result of **(A \+ B)** is a `Quantity` (unless A and B are `Units`) and has the **unit of B** (`Quantity` + `Unit` gives the same Quantity but converted in the given Unit)
 
 ## Examples
 
+Those examples are a quasi-exhaustive demonstration of the possibilities of this module. You don't need all of this to get started! For a simple usage with lightweight syntax, see the next paragraph.
+
 ```py
-# dimentions
-length = Dimention(L=1)
-speed  = Dimention(L=1, T=-1)
-acceleration = Dimention( {'L':1, 'T':-2} )
+# dimensions
+length = Dimension(L=1)
+speed  = Dimension(L=1, T=-1)
+acceleration = Dimension( {'L':1, 'T':-2} )
 
 # unit definitions
-m_    = Unit(scale=1, dim=length)       # a unit is composed of a dimention and a scale
+m_    = Unit(scale=1, dim=length)       # a unit is composed of a dimension and a scale
 km_   = Unit(scale=1000, dim=length)    # scale is relative to the SI-unit
 kn_   = Unit(0.514444,speed)            # the knot definition
 kg_   = Unit(M=1)
@@ -56,10 +58,10 @@ print( c + km_h_ )          # print the speed of light in kilometers per hour
 ### Predefined units and constants
 
 <p align="center">
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SI_base_units.svg/128px-SI_base_units.svg.png">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SI_base_units.svg/256px-SI_base_units.svg.png">
 </p>
 
-The [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit) is based on 7 dimentions of measurement:
+The [SI base units](https://en.wikipedia.org/wiki/SI_base_unit) are based on 7 dimensions of measurement:
 
 - **`'T'`** for time
 - **`'L'`** for length
@@ -69,7 +71,7 @@ The [SI base unit](https://en.wikipedia.org/wiki/SI_base_unit) is based on 7 dim
 - **`'M'`** for amount of substance
 - **`'J'`** for luminous intensity
 
-Those dimentions are used in the module `unity.si_units`. You can still define your own arbitrary dimentions on top of that, like **`'$'`** or **`'people'`**.
+Those dimensions are used in the module `unity.si_units`. You can still define your own arbitrary dimensions on top of that, like **`'$'`** or **`'people'`**.
 
 ```py
 from unity.si_units import * # see source file for exhaustive list of standard units
