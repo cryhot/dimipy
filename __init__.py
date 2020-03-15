@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import functools
+import math
 
 def ordering(key, standard=None):
     """Class decorator that implement ordering methods from key."""
@@ -49,6 +50,16 @@ def _neatscale(value):
     except Exception:
         pass
     return value
+def _strscale(value):
+    """print"""
+    try:
+        e = math.log10(value)
+        e_ = int(e)
+        if e_ == e and e_ != 0:
+            return "1e{:+d}".format(e_)
+    except Exception:
+        pass
+    return "{!s}".format(value)
 _tran_exposant = str.maketrans(
     "0123456789+-=().",
     "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾·",
@@ -123,6 +134,7 @@ class Dimention(dict):
         key_to_del = set()
         for key, value in super(__class__,self).items():
             if not value: key_to_del.add(key)
+            else: super(__class__,self).__setitem__(key, _neatscale(value))
         for key in key_to_del:
             super(__class__,self).__delitem__(key)
 
@@ -277,6 +289,8 @@ class Unit(object):
     """Describes a physical unit. Should be immutable."""
     def __init__(self, *args, scale=Neutral.NEUTRAL, dim=Dimention.NODIM, **kwds):
         """Create a new Unit with a dimention and a certain scale."""
+        if not isinstance(dim, Dimention):
+        	dim = Dimention(dim)
         if kwds:
             dim *= Dimention(**kwds)
         for arg in args:
@@ -352,7 +366,7 @@ class Unit(object):
         )
     def __str__(self):
         return "({!s}{!s})".format(
-            self.scale,
+            _strscale(self.scale),
             self.dim or "",
         )
 
@@ -431,6 +445,11 @@ class Quantity(object):
         self.amount += value.amount
         return self
     @_return_scalar
+    def __pos__(self):
+        ans = self.copy()
+        ans.amount = +ans.amount
+        return ans
+    @_return_scalar
     def __sub__(self, value):
         ans = self.copy()
         ans.__isub__(value) # /!\ ans.amount -= value.amount
@@ -444,6 +463,11 @@ class Quantity(object):
         self.convert(value.unit)
         self.amount -= value.amount
         return self
+    @_return_scalar
+    def __neg__(self):
+        ans = self.copy()
+        ans.amount = -ans.amount
+        return ans
     @_return_scalar
     def __mul__(self, value):
         ans = self.copy()
@@ -498,9 +522,15 @@ class Quantity(object):
         if not isinstance(value, (Unit,Quantity)):
             value = Quantity(value)
         return value.__truediv__(self)
+    def __abs__(self):
+        ans = self.copy()
+        ans.amount = abs(ans.amount)
+        return ans
+    def __nonzero__(self):
+    	return bool(self.amount)
 
     def __hash__(self):
-        ans = hash(self.scale) + hash(self.dim)
+        ans = hash(self.amount) + hash(self.unit)
         return ans*hash(self.__class__)
 
     def __repr__(self):
