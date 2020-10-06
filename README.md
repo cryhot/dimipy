@@ -100,3 +100,5 @@ print( u_mass / u_crit_mass  +0 ) # print it as a Unit.SCALAR
 ## Contact
 
 Jean-Raphaël Gaglione   < jr dot gaglione at yahoo dot fr >
+
+_If you are interested in that project, do not hesitate to contact me!_

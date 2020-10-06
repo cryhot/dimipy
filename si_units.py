@@ -18,11 +18,14 @@ min_  = s_ * 60
 hour_ = s_ * 3600
 day_  = hour_ * 24
 year_ = Unit( 365*day_ + 5*hour_ + 48*min_ + 45*s_ ) # mean tropical year
+week_  = day_*7
+month_ = year_/12
 
 Å_  = ang_ = m_ * 1e-10 # Ångström
 nm_ = m_ * 1e-9
 µm_ = m_ * 1e-6
 mm_ = m_ * 1e-3
+cm_ = m_ * 1e-2
 km_ = m_ * 1e3
 au_ = m_ * 149597870700 # astronomical unit
 ly_ = m_ * 9460730472580800 # light-year
@@ -33,17 +36,22 @@ ng_  = g_ * 1e-9
 µg_  = g_ * 1e-6
 mg_  = g_ * 1e-3
 
+L_  = m_ ** 3 * 1e-3
+mL_ = L_ * 1e-3
+cL_ = L_ * 1e-2
+
 
 Hz_  = s_ ** -1 # hertz
 kHz_ = Hz_ * 1e3
 MHz_ = Hz_ * 1e6
 GHz_ = Hz_ * 1e9
 N_   = Unit(M= 1, L= 1, T=-2) # newton
+kN_  = N_ * 1e3
 Pa_  = Unit(M= 1, L=-1, T=-2) # pascal
-hPa_  = Pa_ * 1e2
-kPa_  = Pa_ * 1e3
-MPa_  = Pa_ * 1e6
-GPa_  = Pa_ * 1e9
+hPa_ = Pa_ * 1e2
+kPa_ = Pa_ * 1e3
+MPa_ = Pa_ * 1e6
+GPa_ = Pa_ * 1e9
 J_   = Unit(M= 1, L= 2, T=-2) # joule
 kJ_  = J_ * 1e3
 MJ_  = J_ * 1e6

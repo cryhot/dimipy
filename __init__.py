@@ -37,7 +37,7 @@ class ConversionError(TypeError):
     @classmethod
     def from_dims(cls, from_, to):
         """Create and return a new ConversionError from two dimentions."""
-        return cls("Inhomogeneous conversion from [%s] to [%s]"%(from_, to))
+        return cls("inhomogeneous conversion from [%s] to [%s]"%(from_, to))
     # def from_units(from_, to):
     #     """Create and return a new ConversionError from two units."""
     #     return ConversionError("Inhomogeneous conversion from '%r' to '%r'"%(from_, to))
@@ -173,23 +173,23 @@ class Dimension(dict):
         )
 
     def __r_binary_op(self, value, op):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         return _get_operation(value, op)(self)
 
     def __neg__(self):
         return self
         # return self.copy()
     def __add__(self, value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         if self != value: raise ConversionError.from_dims(self, value)
         return value
         # return value.copy()
     def __radd__(self,value): return self.__r_binary_op(value, '__add__')
-    def __sub__(self,value):  return self.__add__(value)
+    def __sub__(self,value):  return self.__add__(-value)
     def __rsub__(self,value): return self.__radd__(value)
     @functools.lru_cache(maxsize=32)
     def __mul__(self, value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         if not self: return value
         if not value: return self
         ans = self.copy()
@@ -200,7 +200,7 @@ class Dimension(dict):
     def __rmul__(self,value): return self.__r_binary_op(value, '__mul__')
     @functools.lru_cache(maxsize=32)
     def __truediv__(self, value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         if not value: return self
         if self is value: return __class__.NODIM
         ans = self.copy()
@@ -210,18 +210,18 @@ class Dimension(dict):
         return ans
     def __rtruediv__(self,value):  return self.__r_binary_op(value, '__truediv__')
     def __floordiv__(self,value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         if self != value: raise ConversionError.from_dims(self, value)
         return __class__.NODIM
     def __rfloordiv__(self,value): return self.__r_binary_op(value, '__floordiv__')
     def __mod__(self, value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         if self != value: raise ConversionError.from_dims(self, value)
         return self
         # return value.copy()
     def __rmod__(self,value): return self.__rtruediv__(value)
     def __divmod__(self,value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         return (self.__floordiv__(value), self.__mod__(value))
     def __rdivmod__(self,value):  return self.__r_binary_op(value, '__divmod__')
     @functools.lru_cache(maxsize=32)
@@ -236,7 +236,7 @@ class Dimension(dict):
     def __eq__(self,value):
         return super(__class__,self).__eq__(value)
     def __lt__(self, value):
-        if not isinstance(value, self.__class__): return NotImplemented
+        if not isinstance(value, __class__): return NotImplemented
         if self != value: raise ConversionError.from_dims(self, value)
         return NotImplemented
     def __le__(self,value): return self.__lt__(value)
