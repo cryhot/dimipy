@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import unity.si_units as _
+import unity.units.si as _
 from math import pi
 
-# _._
 π = pi
 
 c = 299792458 * (_.m_/_.s_) # speed of light
@@ -19,6 +18,6 @@ m_e = 9.1093835611e-31 * _.kg_ # electron mass
 g = 9.80665 * (_.m_/_.s_**2) # standard Earth gravity
 atm = 101325 * _.Pa_ # standard Earth atmosphere
 
-celcius = 273.15 * _.K_ # 0°C
+zero_celcius = 273.15 * _.K_ # 0°C
 
 del _

@@ -3,6 +3,7 @@
 
 import functools
 import math
+from fractions import Fraction
 
 def ordering(key, standard=None):
     """Class decorator that implement ordering methods from key."""
@@ -44,6 +45,7 @@ class ConversionError(TypeError):
 
 def _neatscale(value):
     """Transform a value in a neater value"""
+    if isinstance(value, Fraction): return value
     try:
         if value == int(value):
             return int(value)
@@ -99,13 +101,13 @@ class Neutral():
         return "<NEUTRAL>"
     def __str__(self):
         return "1"
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.__class__)+1
 Neutral.NEUTRAL = Neutral()
 
 
 ################################################################################
-# DIMENTION                                                                    #
+# DIMENSION                                                                    #
 ################################################################################
 
 class Dimension(dict):
@@ -243,7 +245,7 @@ class Dimension(dict):
     def __le__(self,value): return self.__lt__(value)
     def __gt__(self,value): return self.__lt__(value)
     def __ge__(self,value): return self.__lt__(value)
-    def __hash__(self):
+    def __hash__(self) -> int:
         ans = 0
         for k,v in super(__class__,self).items():
             hash_v = hash(v)
@@ -252,7 +254,7 @@ class Dimension(dict):
             ans += hash(k)*hash_v
         return ans*hash(self.__class__)
 
-    def repr_dim(self):
+    def repr_dim(self) -> str:
         if not self: return "1"
         return " ".join(
             "{}{}".format(
@@ -261,12 +263,12 @@ class Dimension(dict):
             )
             for k,v in self.items()
         )
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{!s}[{}]".format(
             self.__class__.__name__,
             self.repr_dim(),
         )
-    def __str__(self):
+    def __str__(self) -> str:
         if not self: return "1"
         return "".join(
             "{}{}".format(
@@ -291,7 +293,7 @@ class Unit(object):
     def __init__(self, *args, scale=Neutral.NEUTRAL, dim=Dimension.NODIM, **kwds):
         """Create a new Unit with a dimention and a certain scale."""
         if not isinstance(dim, Dimension):
-        	dim = Dimension(dim)
+            dim = Dimension(dim)
         if kwds:
             dim *= Dimension(**kwds)
         for arg in args:
@@ -306,7 +308,7 @@ class Unit(object):
             else:
                 scale *= arg
         if scale is Neutral.NEUTRAL:
-            scale = 1
+            scale = Fraction(1)
         super(__class__, self).__init__()
         super(__class__, self).__setattr__('scale', scale)
         super(__class__, self).__setattr__('dim', dim)
@@ -352,20 +354,28 @@ class Unit(object):
         if not isinstance(value, (Unit,Quantity)):
             value = Quantity(value)
         return value.__truediv__(self)
+    def __rfloordiv__(self, value):
+        if not isinstance(value, (Unit,Quantity)):
+            value = Quantity(value)
+        return value.__floordiv__(self)
+    def __rmod__(self, value):
+        if not isinstance(value, (Unit,Quantity)):
+            value = Quantity(value)
+        return value.__mod__(self)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         ans = hash(self.scale) + hash(self.dim)
         return ans*hash(self.__class__)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return bool(self.dim) or self.scale not in (1,Neutral.NEUTRAL)
-    def __repr__(self):
-        return "{!s}[{!r} * {}]".format(
+    def __repr__(self) -> str:
+        return "{!s}[{!s} * {}]".format(
             self.__class__.__name__,
             self.scale,
             self.dim.repr_dim(),
         )
-    def __str__(self):
+    def __str__(self) -> str:
         return "({!s}{!s})".format(
             _strscale(self.scale),
             self.dim or "",
@@ -424,11 +434,12 @@ class Quantity(object):
     def convert(self, unit=None):
         """Convert quantity in place from a unit to an other unit.
         If unit is not specified, convert to SI."""
+        if unit is None and isinstance(self.unit.scale, Fraction): unit = Unit(Fraction(1), self.unit.dim)
         if unit is None: unit = Unit(self.unit.dim)
-        if self.unit is unit or self.unit == unit: return
+        if self.unit is unit or self.unit == unit: return self
         factor = (self.unit/unit).scale
         self.unit += unit
-        if factor==1: return
+        if factor==1: return self
         self.amount = _neatscale(self.amount*factor)
         return self
     @_return_scalar
@@ -498,6 +509,34 @@ class Quantity(object):
         self.unit /= value.unit
         return self
     @_return_scalar
+    def __floordiv__(self, value) -> int:
+        ans = self.copy()
+        ans.__ifloordiv__(value) # /!\ ans.amount //= value.amount
+        return ans
+    def __ifloordiv__(self, value):
+        if isinstance(value, Unit):
+            value = __class__(amount=1, unit=value)
+        if not isinstance(value, __class__):
+            value = __class__(value)
+        self.convert(value.unit)
+        self.amount //= value.amount
+        try: self.amount = round(self.amount)
+        except (ValueError, ArithmeticError): pass
+        self.unit /= value.unit
+        return self
+    def __mod__(self, value):
+        ans = self.copy()
+        ans.__imod__(value) # /!\ ans.amount %= value.amount
+        return ans
+    def __imod__(self, value):
+        if isinstance(value, Unit):
+            value = __class__(amount=1, unit=value)
+        if not isinstance(value, __class__):
+            value = __class__(value)
+        self.convert(value.unit)
+        self.amount %= value.amount
+        return self
+    @_return_scalar
     def __pow__(self, value):
         ans = self.copy()
         ans.__ipow__(value) # /!\ ans.amount **= value.amount
@@ -523,25 +562,35 @@ class Quantity(object):
         if not isinstance(value, (Unit,Quantity)):
             value = Quantity(value)
         return value.__truediv__(self)
+    def __rfloordiv__(self, value):
+        if not isinstance(value, (Unit,Quantity)):
+            value = Quantity(value)
+        return value.__floordiv__(self)
+    def __rmod__(self, value):
+        if not isinstance(value, (Unit,Quantity)):
+            value = Quantity(value)
+        return value.__mod__(self)
     def __abs__(self):
         ans = self.copy()
         ans.amount = abs(ans.amount)
         return ans
     def __nonzero__(self):
-    	return bool(self.amount)
+        return bool(self.amount)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         ans = hash(self.amount) + hash(self.unit)
         return ans*hash(self.__class__)
 
-    def __repr__(self):
-        return "{!s}[{!r} * ({!r} * {})]".format(
+    def __bool__(self) -> bool:
+        return bool(self.amount)
+    def __repr__(self) -> str:
+        return "{!s}[{!s} * ({!s} * {})]".format(
             self.__class__.__name__,
             self.amount,
             self.unit.scale,
             self.unit.dim.repr_dim(),
         )
-    def __str__(self):
+    def __str__(self) -> str:
         return "{!s}{!s}".format(
             self.amount,
             self.unit,
