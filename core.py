@@ -126,10 +126,10 @@ class Dimension(dict):
     @classmethod
     def dim_of(cls, value):
         """Get the dimention of a value."""
-        if isinstance(value, cls): return value
-        if isinstance(value, Unit): return value.dim
-        if isinstance(value, Quantity): return value.unit.dim
-        return cls.NODIM
+        if isinstance(value, __class__): return value
+        if isinstance(value, Unit): return cls.dim_of(value.dim)
+        if isinstance(value, Quantity): return cls.dim_of(value.unit)
+        return cls.dim_of(cls.NODIM)
     def copy(self):
         return __class__(self)
     def __prune(self):
@@ -183,13 +183,15 @@ class Dimension(dict):
         return self
         # return self.copy()
     def __add__(self, value):
-        if not isinstance(value, __class__): return NotImplemented
-        if self != value: raise ConversionError.from_dims(self, value)
+        # if not isinstance(value, __class__): return NotImplemented
+        dim = self.dim_of(value)
+        if self != dim: raise ConversionError.from_dims(self, dim)
         return value
         # return value.copy()
-    def __radd__(self,value): return self.__r_binary_op(value, '__add__')
+    # def __radd__(self,value): return self.__r_binary_op(value, '__add__')
+    def __radd__(self,value): return self.__add__(value)
     def __sub__(self,value):  return self.__add__(-value)
-    def __rsub__(self,value): return self.__radd__(value)
+    def __rsub__(self,value): return (-self).__radd__(value)
     @functools.lru_cache(maxsize=32)
     def __mul__(self, value):
         if not isinstance(value, __class__): return NotImplemented
@@ -322,9 +324,11 @@ class Unit(object):
         )
 
     def __add__(self, value):
+        if isinstance(value, Dimension): return NotImplemented  # let Dimension handle it
         self.dim + Dimension.dim_of(value)
         return value
     def __sub__(self, value):
+        if isinstance(value, Dimension): return NotImplemented  # let Dimension handle it
         self.dim - Dimension.dim_of(value)
         return -value
     def __mul__(self, value):
@@ -339,11 +343,11 @@ class Unit(object):
         return __class__(scale=_neatscale(self.scale**value), dim=self.dim**value)
 
     def __radd__(self, value):
-        if not isinstance(value, (Unit,Quantity)):
+        if not isinstance(value, (Unit,Quantity,Dimension)):
             value = Quantity(value)
         return value.__add__(self)
     def __rsub__(self, value):
-        if not isinstance(value, (Unit,Quantity)):
+        if not isinstance(value, (Unit,Quantity,Dimension)):
             value = Quantity(value)
         return value.__sub__(self)
     def __rmul__(self, value):
@@ -362,6 +366,10 @@ class Unit(object):
         if not isinstance(value, (Unit,Quantity)):
             value = Quantity(value)
         return value.__mod__(self)
+    def __rdivmod__(self,value):
+        if not isinstance(value, (Unit,Quantity)):
+            value = Quantity(value)
+        return value.__divmod__(self)
 
     def __hash__(self) -> int:
         ans = hash(self.scale) + hash(self.dim)
@@ -444,12 +452,16 @@ class Quantity(object):
         return self
     @_return_scalar
     def __add__(self, value):
+        if isinstance(value, Dimension): return NotImplemented  # let Dimension handle it
         ans = self.copy()
         ans.__iadd__(value) # /!\ ans.amount += value.amount
         return ans
     def __iadd__(self, value):
+        if isinstance(value, Dimension): return NotImplemented  # let Dimension handle it
         if isinstance(value, Unit):
             self.convert(value)
+            return self
+        if isinstance(value, Dimension):
             return self
         if not isinstance(value, __class__):
             value = __class__(value)
@@ -463,10 +475,12 @@ class Quantity(object):
         return ans
     @_return_scalar
     def __sub__(self, value):
+        if isinstance(value, Dimension): return NotImplemented  # let Dimension handle it
         ans = self.copy()
         ans.__isub__(value) # /!\ ans.amount -= value.amount
         return ans
     def __isub__(self, value):
+        if isinstance(value, Dimension): return NotImplemented  # let Dimension handle it
         if isinstance(value, Unit):
             self.convert(value)
             return self
@@ -524,6 +538,7 @@ class Quantity(object):
         except (ValueError, ArithmeticError): pass
         self.unit /= value.unit
         return self
+    @_return_scalar
     def __mod__(self, value):
         ans = self.copy()
         ans.__imod__(value) # /!\ ans.amount %= value.amount
@@ -536,6 +551,21 @@ class Quantity(object):
         self.convert(value.unit)
         self.amount %= value.amount
         return self
+    def __divmod__(self,value):
+        if isinstance(value, Unit):
+            value = __class__(amount=1, unit=value)
+        if not isinstance(value, __class__):
+            value = __class__(value)
+        a = self.copy()
+        a.convert(value.unit)
+        b = a.copy()
+        a.amount, b.amount = divmod(a.amount,value.amount)
+        try: a.amount = round(a.amount)
+        except (ValueError, ArithmeticError): pass
+        a.unit /= value.unit
+        if not a.unit: a = a.amount
+        if not b.unit: b = b.amount
+        return (a,b)
     @_return_scalar
     def __pow__(self, value):
         ans = self.copy()
@@ -547,11 +577,11 @@ class Quantity(object):
         return self
 
     def __radd__(self, value):
-        if not isinstance(value, (Unit,Quantity)):
+        if not isinstance(value, (Unit,Quantity,Dimension)):
             value = Quantity(value)
         return value.__add__(self)
     def __rsub__(self, value):
-        if not isinstance(value, (Unit,Quantity)):
+        if not isinstance(value, (Unit,Quantity,Dimension)):
             value = Quantity(value)
         return value.__sub__(self)
     def __rmul__(self, value):
@@ -570,6 +600,10 @@ class Quantity(object):
         if not isinstance(value, (Unit,Quantity)):
             value = Quantity(value)
         return value.__mod__(self)
+    def __rdivmod__(self, value):
+        if not isinstance(value, (Unit,Quantity)):
+            value = Quantity(value)
+        return value.__divmod__(self)
     def __abs__(self):
         ans = self.copy()
         ans.amount = abs(ans.amount)

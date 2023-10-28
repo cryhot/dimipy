@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """https://en.wikipedia.org/wiki/Metric_prefix"""
 
-
-from unity.prefixes import unit
+from . import unit
 subbase = unit*10
 base = subbase**3
 

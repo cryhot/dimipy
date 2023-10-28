@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """https://en.wikipedia.org/wiki/Binary_prefix"""
 
-
-from unity.prefixes import unit
+from . import unit
 base = unit*1024
 
 Ki = kibi = base**1

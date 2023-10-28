@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """https://en.wikipedia.org/wiki/Units_of_information"""
+from .si import (s_,)
 
-from unity import prefixes as _
-from unity import Unit
+from .. import prefixes as _
+from ..core import Unit
 b_ = bit_ = Unit(_.unit, Bit=1)
 B_ = byte_ = b_ * 8
 del Unit
 
-from unity.prefixes import metric as _
-kb_ = kB_ = _.k*b_
+from ..prefixes import metric as _
+kb_ = Kb_ = _.k*b_
 Mb_ = _.M*b_
 Gb_ = _.G*b_
 Tb_ = _.T*b_
@@ -21,7 +22,19 @@ GB_ = _.G*B_
 TB_ = _.T*B_
 PB_ = _.P*B_
 
-from unity.prefixes import binary as _
+kbps_ = Kbps_ = kb_/s_
+Mbps_ = Mb_/s_
+Gbps_ = Gb_/s_
+Tbps_ = Tb_/s_
+Pbps_ = Pb_/s_
+
+kBps_ = KBps_ = kB_/s_
+MBps_ = MB_/s_
+GBps_ = GB_/s_
+TBps_ = TB_/s_
+PBps_ = PB_/s_
+
+from ..prefixes import binary as _
 Kib_ = _.Ki*b_
 Mib_ = _.Mi*b_
 Gib_ = _.Gi*b_
@@ -34,4 +47,17 @@ GiB_ = _.Gi*B_
 TiB_ = _.Ti*B_
 PiB_ = _.Pi*B_
 
+Kibps_ = Kib_/s_
+Mibps_ = Mib_/s_
+Gibps_ = Gib_/s_
+Tibps_ = Tib_/s_
+Pibps_ = Pib_/s_
+
+KiBps_ = KiB_/s_
+MiBps_ = MiB_/s_
+GiBps_ = GiB_/s_
+TiBps_ = TiB_/s_
+PiBps_ = PiB_/s_
+
 del _
+del (s_,)

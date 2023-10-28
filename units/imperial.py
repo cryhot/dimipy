@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from fractions import Fraction
-from unity import Unit
-from unity.units import si
 """https://en.wikipedia.org/wiki/Imperial_units"""
+from fractions import Fraction
+from ..core import Unit
+from . import si
+from ..constants import defined as cst
+
+# TIME
+from .si import (s_,min_,h_,d_,)
 
 # LENGTH
 yd_ = si.m_ * Fraction("0.9144") # yard
@@ -35,6 +39,13 @@ qr_  = qtr_ = st_*2 # quarter
 cwt_ = st_*8    # (long) hundredweight
 t_   = cwt_*20  # (long) ton
 
+# DERIVED UNITS
+mph_ = mi_/h_
+lbf_ = lb_*cst.g_0 # pound-force
+psi_ = lbf_/in_**2 # pound per square inch
+slug_ = lbf_ / (ft_/s_**2) # slug
+
 del Fraction
 del Unit
 del si
+del cst

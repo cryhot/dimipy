@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from fractions import Fraction
-from unity import Unit
-from unity.units import si, imperial
 """https://en.wikipedia.org/wiki/United_States_customary_units"""
+from fractions import Fraction
+from ..core import Unit
+from . import si, imperial
+
+# TIME
+from .si import (s_,min_,h_,d_,)
 
 
 # LENGTH
-in_ = imperial.in_
-ft_ = imperial.ft_
-yd_ = imperial.yd_
-mi_ = imperial.mi_
+from .imperial import (in_, ft_, yd_, mi_,)
 P_  = in_/6 # pica
 p_  = P_/12 # point
 
@@ -29,12 +29,12 @@ fl_dr_ = tbsp_/4    # fluid dram
 min_   = fl_dr_/60  # minim
 
 # MASS
-gr_ = imperial.gr_
-dr_ = imperial.dr_
-oz_ = imperial.oz_
-lb_ = imperial.lb_
+from .imperial import (gr_, dr_, oz_, lb_,)
 cwt_ = lb_*100  # (short) hundredweight
 t_   = cwt_*20  # (short) ton
+
+# DERIVED UNITS
+from .imperial import (mph_,lbf_, psi_,)
 
 
 del Fraction

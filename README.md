@@ -6,16 +6,17 @@ unit library for python3
 
 ## Content
 
-3 levels datastructure: ``Dimension`` - ``Unit`` - ``Quantity``
+3 levels datastructure: `Dimension` - `Unit` - `Quantity`
 - `Dimension`: relates to a physical dimension (immutable)
 - `Unit`: describes a physical unit with it's scale (immutable)
 - `Quantity`: describes a certain amount of a given unit
 
 Basic rules for `Unit`, `Quantity` and other types operations:
-1. an ordinary object is considered as a `Quantity` object whose Unit is `Unit.SCALAR` (no dimension, scale `1`)
+1. an ordinary object is considered as a `Quantity` object whose Unit is `Unit.SCALAR` (no dimension, scale `1`),
 2. if the result of an operation is a `Quantity` whose Unit has no dimension and scale `1` (i.e. equal to `Unit.SCALAR`), the result is substituted with the quantity itself
-3. the result of **(A \* B)** has the **type of A** (so n\*`Unit` is a `Quantity` but `Unit`\*n is a new `Unit`)
-4. the result of **(A \+ B)** is a `Quantity` (unless A and B are both `Units`) and has the **unit of B** (`Quantity` + `Unit` gives the same Quantity but converted in the given Unit)
+3. the result of **(A \* B)** has the **type of A** (so n\*`Unit` is a `Quantity` but `Unit`\*n is a new `Unit`),
+4. the result of **(A \+ B)** is a `Quantity` (unless A and B are both `Units`) and has the **unit of B** (`Quantity` + `Unit` gives the same quantity but converted in the given unit).
+  If either A or B is a `Dimension`, perform the dimention check without unit conversion, and return the other value.
 
 
 ## Examples
@@ -70,9 +71,9 @@ kn_   = Unit(0.514444,speed)            # the knot definition
 kg_   = Unit(1,M=1)     # the dimension parameters can be passed as kwargs
 s_    = Unit(T=1)       # a unit with scale 1 (default)
 min_  = Unit(60,T=1)    # a unit with scale 60
-hour_ = s_ * 3600       # a unit with scale 3600 (s_ MUST be on left)
-day_  = hour_ * 24      # a unit with scale 3600 * 24 = 86400
-km_h_ = km_ / hour_     # equivalent to Unit(1000/3600, speed)
+h_    = s_ * 3600       # a unit with scale 3600 (s_ MUST be on left)
+d_    = h_ * 24         # a unit with scale 3600 * 24 = 86400
+km_h_ = km_ / h_        # equivalent to Unit(1000/3600, speed)
 N_    = Unit(M=1,L=1,T=-2)
 J_    = Unit(M=1,L=2,T=-2) +N_*m_ # checks the compatibility of units (homogeneity)
 W_    = Unit(M=1,L=2,T=-3) +J_/s_ # actually, W_ takes the value of (J_/s_), the last term
@@ -83,17 +84,17 @@ c = 299792458 * (m_/s_)             # ((m_/s_) MUST be on right)
 sun_earth = (8*min_ + 20*s_) / c    # operation between quantities (result is a distance)
 au_ = Unit(sun_earth)               # create a unit from a quantity
 
-time = 9*hour_ + 80.1*min_  # first convert 9*hour_ in min_, then add
-time.convert(day_)          # convert time in place in minutes
-time.convert()              # convert time in place in SI, i.e. in s_
-time2 = time +day_          # Quantity + Unit -> convert the quantity (time2 in day_)
-time3 = day_+ time          # Unit + Quantity -> only checks the compatibility (time3 still in s_)
-time3 += day_               # same as time3.convert(day_)
-b1 = (time2 == time3)       # True
-b2 = ( 12*day_ < 1e6*s_ )   # False
-print( c +km_h_ )           # print the speed of light in kilometers per hour
+time = 9*h_ + 80.1*min_ # first convert 9*h_ in min_, then add
+time.convert(d_)        # convert time in place in minutes
+time.convert()          # convert time in place in SI, i.e. in s_
+time2 = time +d_        # Quantity + Unit -> convert the quantity (time2 in d_)
+time3 = d_+ time        # Unit + Quantity -> only checks the compatibility (time3 still in s_)
+time3 += d_             # same as time3.convert(d_)
+b1 = (time2 == time3)   # True
+b2 = ( 12*d_ < 1e6*s_ ) # False
+print( c +km_h_ )       # print the speed of light in kilometers per hour
 print(( c )/(km_h_)+0., "km/h") # print the converted amount; adding zero converts to Unit.SCALAR
-print( f"{time //hour_ :n}:{time%hour_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints '10:20:06'
+print( f"{time //h_ :n}:{time%h_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints '10:20:06'
 ```
 
 

@@ -1,23 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import unity.units.si as _
-from math import pi
+from fractions import Fraction
+from ..units import si as _
 
-π = pi
+from .math import *
+from .defined import *
+del Δv_Cs # who cares?
 
-c = 299792458 * (_.m_/_.s_) # speed of light
-G = 6.6740831e-11 * ( _.N_ * (_.m_/_.kg_)**2 ) # gravitational constant
-h = 6.6260704081e-34 * ( _.J_ * _.s_ ) # Plank constant
-ħ = h / (2*pi) #  reduced Planck constant
-R = 8.314459848 * ( _.J_ / _.mol_ / _.K_ ) # gas constant = N_A*k_B
-N_A = 6.02214085774e23 * ( _.mol_**-1 ) # Avogadro constant
-k_B = 1.3806485279e-23 * ( _.J_ / _.K_ ) # Boltzmann constant
-e = 1.602176620898e-19 * _.C_ # elementary charge
-m_e = 9.1093835611e-31 * _.kg_ # electron mass
+# m_u = ...
+G = 6.6743015e-11 * (_.N_*_.m_**2*_.kg_**-2) # Gravitational constant
+k_e = 8.987551792314e9 * (_.N_*_.m_**2*_.C_**-2) # Coulomb constant
+ϵ_0 = 1/(4*π * k_e) # vacuum electric permitivity
+µ_0 = 1/(ϵ_0 * c**2) # vacuum magnetic permeability
+α = e**2 / (2 * ϵ_0 * h * c) # fine-structure constant
+m_e = 9.109383701528e-31 * (_.kg_) # electron mass
 
-g = 9.80665 * (_.m_/_.s_**2) # standard Earth gravity
-atm = 101325 * _.Pa_ # standard Earth atmosphere
-
-zero_celcius = 273.15 * _.K_ # 0°C
-
+del Fraction
 del _
+__all__ = [
+    k
+    for k,v in globals().items()
+    if v.__class__.__name__ != 'module'  # don't import submodules with *
+]
