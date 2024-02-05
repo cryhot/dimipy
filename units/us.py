@@ -33,6 +33,9 @@ from .imperial import (gr_, dr_, oz_, lb_,)
 cwt_ = lb_*100  # (short) hundredweight
 t_   = cwt_*20  # (short) ton
 
+# TEMPERATURE
+from .imperial import (Ra_, zero_farenheit,)
+
 # DERIVED UNITS
 from .imperial import (mph_,lbf_, psi_,)
 

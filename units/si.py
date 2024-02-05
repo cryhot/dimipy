@@ -98,6 +98,7 @@ lx_  = dim.luminous.illuminance+ lm_/m_**2 # lux
 from .angle import (deg_,arcmin_,arcsec_)
 from ..constants import defined as cst
 eV_ = V_*cst.e # electronvolt
+from ..constants.defined import (zero_celcius,)
 
 
 del Fraction

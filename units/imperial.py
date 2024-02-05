@@ -39,6 +39,13 @@ qr_  = qtr_ = st_*2 # quarter
 cwt_ = st_*8    # (long) hundredweight
 t_   = cwt_*20  # (long) ton
 
+# TEMPERATURE
+Ra_ = si.K_ * Fraction("5/9") # Rankine
+zero_farenheit = Fraction("459.67") * (Ra_) # 0°F
+# to convert a temperature:
+# temp_farenheit = temp_kelvin_or_rankine -zero_farenheit
+# temp_farenheit = temp_celcius +zero_celcius-zero_farenheit
+
 # DERIVED UNITS
 mph_ = mi_/h_
 lbf_ = lb_*cst.g_0 # pound-force

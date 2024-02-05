@@ -292,6 +292,7 @@ Dimension.NODIM = Dimension()
 )
 class Unit(object):
     """Describes a physical unit. Should be immutable."""
+    __match_args__ = ('scale','dim',)
     def __init__(self, *args, scale=Neutral.NEUTRAL, dim=Dimension.NODIM, **kwds):
         """Create a new Unit with a dimention and a certain scale."""
         if not isinstance(dim, Dimension):
@@ -402,6 +403,7 @@ Unit.SCALAR = Unit()
 )
 class Quantity(object):
     """Describes a certain amount of a given unit."""
+    __match_args__ = ('amount','unit',)
     def __init__(self, *args, amount=Neutral.NEUTRAL, unit=Unit.SCALAR):
         """Create a new Unit with a dimention and a certain scale."""
         for arg in args:
