@@ -3,8 +3,11 @@
 
 from ..core import Unit
 from fractions import Fraction
-unit = Unit.SCALAR * Fraction(1)
-del Unit, Fraction
+from .. import params
+unit = params.get('_unitary_scale', Fraction(1))
+assert unit == 1, f"params['_unitary_scale'] must be unitary, got {unit!r}"
+unit = Unit.SCALAR * unit
+del Unit, Fraction, params
 
 from .metric import *
 __all__ = [

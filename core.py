@@ -319,7 +319,8 @@ class Unit(object):
             else:
                 scale *= arg
         if scale is Neutral.NEUTRAL:
-            scale = Fraction(1)
+            from . import params
+            scale = params.get('_base_scale', Fraction(1))
         super(__class__, self).__init__()
         super(__class__, self).__setattr__('scale', scale)
         super(__class__, self).__setattr__('dim', dim)
@@ -445,7 +446,8 @@ class Quantity(object):
         @functools.wraps(fun)
         def wrapper(*args, **kwds):
             ans = fun(*args, **kwds)
-            if isinstance(ans, __class__) and not ans.unit:
+            from . import params
+            if params.get('unwrap_scalar',True) and isinstance(ans, __class__) and not ans.unit:
                 ans = ans.amount
             return ans
         return wrapper

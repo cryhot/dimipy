@@ -101,7 +101,6 @@ print( f"{time //h_ :n}:{time%h_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints 
 ## What next?
 
 - [x] include more standard units and constants (ongoing process)
-- [x] use fractions for Unit.scale
 - [ ] named units and composed units
 - [ ] non linear units (like celsius compared to Kelvin, or decibels) - If I have time and motivation
   For temperatures, one can currently use:

@@ -4,6 +4,7 @@
 
 from fractions import Fraction
 from ..core import Dimension
+from .. import params
 
 dimensionless = Dimension.NODIM
 
@@ -13,8 +14,8 @@ length                    = Dimension(L=1)
 mass                      = Dimension(M=1)
 electric_current          = Dimension(I=1)
 thermodynamic_temperature = Dimension(Θ=1)
-amount_of_substance       = Dimension(N=1)
-angle = length/length
+amount_of_substance       = Dimension(params.get('dim_amount_of_substance',dict(N=1)))
+angle                     = Dimension(params.get('dim_angle',dict(A=1)))
 
 # DERIVED DIMENSIONS
 solid_angle = angle**2
@@ -42,6 +43,7 @@ heat = energy
 
 del Fraction
 del Dimension
+del params
 __all__ = [
     k
     for k,v in globals().items()
