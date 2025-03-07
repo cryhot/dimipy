@@ -97,6 +97,39 @@ print(( c )/(km_h_)+0., "km/h") # print the converted amount; adding zero conver
 print( f"{time //h_ :n}:{time%h_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints '10:20:06'
 ```
 
+## Formats
+Several formatters are available  (see [`unity.formatters`](formatters.py) for available formatters).
+```python
+from unity.units import *
+from unity.formatters import *
+quantity = 1.21*GW_
+print(Formatter().format(quantity))
+print(PrettyFormatter().format(quantity))
+print(LegacyFormatter().format(quantity))
+print(CodeFormatter().format(quantity))
+print(CodeFormatter(explicit_type=True).format(quantity))
+print(LatexFormatter(dim_spacing=r"\cdot").format(quantity))
+```
+This prints:
+```console
+1.21(10^9 M L^2 T^-3)
+1.21(10⁹ML²T⁻³)
+Quantity[1.21 * (10⁹ * M L² T⁻³)]
+1.21 * Unit(Fraction(1000000000, 1), M=1, L=2, T=-3)
+Quantity(1.21, Unit(Fraction(1000000000, 1), M=1, L=2, T=-3))
+$1.21{\color{cyan}\left({10}^{9}\cdot\mathsf{M}\cdot\mathsf{L}^{2}\cdot\mathsf{T}^{-3}\right)}$
+```
+
+One can easily reconfigure default formatters.
+```python
+import unity
+unity.params.update(
+	str_formatter=unity.formatters.PrettyFormatter(),   # for str()
+	repr_formatter=unity.formatters.PrettyFormatter(),  # for repr()
+	display_formatter=formatters.LatexFormatter(),      # for IPython
+)
+```
+
 
 ## What next?
 

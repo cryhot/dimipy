@@ -40,7 +40,7 @@ class DimensionError(TypeError):
         """Create and return a new DimensionError from two dimensions."""
         from_ = Dimension.dim_of(from_)
         to = Dimension.dim_of(to)
-        return cls("inhomogeneous conversion from [%s] to [%s]"%(from_, to))
+        return cls("inhomogeneous conversion from %s to %s"%(from_, to))
     # def from_units(from_, to):
     #     """Create and return a new DimensionError from two units."""
     #     return DimensionError("Inhomogeneous conversion from '%r' to '%r'"%(from_, to))
@@ -54,25 +54,6 @@ def _neatscale(value):
     except Exception:
         pass
     return value
-def _strscale(value):
-    """print"""
-    try:
-        e = math.log10(value)
-        e_ = int(e)
-        if e_ == e and e_ != 0:
-            # return "1e{:+d}".format(e_)
-            return "10{}".format(repr(e_).translate(_tran_exposant) if e_!=1 else "")
-    except Exception:
-        pass
-    return "{!s}".format(value)
-_tran_exposant = str.maketrans(
-    "0123456789+-=().",
-    "⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾·",
-)
-_tran_indice = str.maketrans(
-    "0123456789+-e=().",
-    "₀₁₂₃₄₅₆₇₈₉₊₋ₑ₌₍₎.",
-)
 def _get_operation(obj, op, ignore=False):
     method = getattr(obj,  op, None)
     if not method:
@@ -264,29 +245,24 @@ class Dimension(dict):
             ans += hash(k)*hash_v
         return ans*hash(self.__class__)
 
-    def repr_dim(self) -> str:
-        if not self: return "1"
-        return " ".join(
-            "{}{}".format(
-                k,
-                repr(v).translate(_tran_exposant) if v!=1 else "",
-            )
-            for k,v in self.items()
-        )
-    def __repr__(self) -> str:
-        return "{!s}[{}]".format(
-            self.__class__.__name__,
-            self.repr_dim(),
-        )
     def __str__(self) -> str:
-        if not self: return "1"
-        return "".join(
-            "{}{}".format(
-                k,
-                str(v).translate(_tran_exposant) if v!=1 else "",
-            )
-            for k,v in self.items()
-        )
+        from . import params
+        formatter = params.get('str_formatter')
+        if formatter is None: return super().__str__()
+        return formatter.format(self)
+    def __repr__(self) -> str:
+        from . import params
+        formatter = params.get('repr_formatter')
+        if formatter is None: return super().__repr__()
+        return formatter.format(self)
+    def _repr_mimebundle_(self, *args, **kwargs):
+        """For IPython."""
+        from . import formatters
+        return formatters.repr_mimebundle(self, *args, **kwargs)
+    # def _repr_latex_(self):
+    #     """For IPython."""
+    #     from . import formatters
+    #     return formatters.LatexFormatter().repr_mimetype(self)
 
 Dimension.NODIM = Dimension()
 
@@ -388,17 +364,24 @@ class Unit(object):
     def __bool__(self) -> bool:
         """Returns True if it is distinct from the unitary dimensionless unit."""
         return bool(self.dim) or self.scale not in (1,Neutral.NEUTRAL)
-    def __repr__(self) -> str:
-        return "{!s}[{!s} * {}]".format(
-            self.__class__.__name__,
-            self.scale,
-            self.dim.repr_dim(),
-        )
     def __str__(self) -> str:
-        return "({!s}{!s})".format(
-            _strscale(self.scale),
-            self.dim or "",
-        )
+        from . import params
+        formatter = params.get('str_formatter')
+        if formatter is None: return super().__str__()
+        return formatter.format(self)
+    def __repr__(self) -> str:
+        from . import params
+        formatter = params.get('repr_formatter')
+        if formatter is None: return super().__repr__()
+        return formatter.format(self)
+    def _repr_mimebundle_(self, *args, **kwargs):
+        """For IPython."""
+        from . import formatters
+        return formatters.repr_mimebundle(self, *args, **kwargs)
+    # def _repr_latex_(self):
+    #     """For IPython."""
+    #     from . import formatters
+    #     return formatters.LatexFormatter().repr_mimetype(self)
 
 Unit.SCALAR = Unit()
 
@@ -654,20 +637,24 @@ class Quantity(object):
         ans = hash(self.amount) + hash(self.unit)
         return ans*hash(self.__class__)
 
-    def __bool__(self) -> bool:
-        return bool(self.amount)
-    def __repr__(self) -> str:
-        return "{!s}[{!s} * ({!s} * {})]".format(
-            self.__class__.__name__,
-            self.amount,
-            self.unit.scale,
-            self.unit.dim.repr_dim(),
-        )
     def __str__(self) -> str:
-        return "{!s}{!s}".format(
-            self.amount,
-            self.unit,
-        )
+        from . import params
+        formatter = params.get('str_formatter')
+        if formatter is None: return super().__str__()
+        return formatter.format(self)
+    def __repr__(self) -> str:
+        from . import params
+        formatter = params.get('repr_formatter')
+        if formatter is None: return super().__repr__()
+        return formatter.format(self)
+    def _repr_mimebundle_(self, *args, **kwargs):
+        """For IPython."""
+        from . import formatters
+        return formatters.repr_mimebundle(self, *args, **kwargs)
+    # def _repr_latex_(self):
+    #     """For IPython."""
+    #     from . import formatters
+    #     return formatters.LatexFormatter().repr_mimetype(self)
 
     del _return_scalar
 
