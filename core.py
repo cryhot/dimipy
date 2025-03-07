@@ -31,17 +31,19 @@ def ordering(key, standard=None):
         return cls
     return decorator
 
-class ConversionError(TypeError):
-    """Inappropriate dimention."""
+class DimensionError(TypeError):
+    """Inappropriate dimension."""
     def __init__(self, *args, **kwds):
-        super(ConversionError, self).__init__(*args, **kwds)
+        super(DimensionError, self).__init__(*args, **kwds)
     @classmethod
     def from_dims(cls, from_, to):
-        """Create and return a new ConversionError from two dimentions."""
+        """Create and return a new DimensionError from two dimensions."""
+        from_ = Dimension.dim_of(from_)
+        to = Dimension.dim_of(to)
         return cls("inhomogeneous conversion from [%s] to [%s]"%(from_, to))
     # def from_units(from_, to):
-    #     """Create and return a new ConversionError from two units."""
-    #     return ConversionError("Inhomogeneous conversion from '%r' to '%r'"%(from_, to))
+    #     """Create and return a new DimensionError from two units."""
+    #     return DimensionError("Inhomogeneous conversion from '%r' to '%r'"%(from_, to))
 
 def _neatscale(value):
     """Transform a value in a neater value"""
@@ -111,7 +113,7 @@ Neutral.NEUTRAL = Neutral()
 ################################################################################
 
 class Dimension(dict):
-    """Relates to a physical dimention. Should be immutable."""
+    """Relates to a physical dimension. Should be immutable."""
     def __new__(cls, *args, **kwds):
         obj = super(__class__, cls).__new__(cls)
         return obj
@@ -125,7 +127,7 @@ class Dimension(dict):
         self.__prune()
     @classmethod
     def dim_of(cls, value):
-        """Get the dimention of a value."""
+        """Get the dimension of a value."""
         if isinstance(value, __class__): return value
         if isinstance(value, Unit): return cls.dim_of(value.dim)
         if isinstance(value, Quantity): return cls.dim_of(value.unit)
@@ -165,9 +167,13 @@ class Dimension(dict):
     def __delattr__(self, *arg,**kwd):
         return self.__delitem__(*arg,**kwd)
     def pop(self, *arg,**kwd):
-        raise NotImplementedError()
+        raise TypeError(
+            "'%s' object does not support item deletion"%(self.__class__.__name__)
+        )
     def popitem(self, *arg,**kwd):
-        raise NotImplementedError()
+        raise TypeError(
+            "'%s' object does not support item deletion"%(self.__class__.__name__)
+        )
     @functools.lru_cache(maxsize=32)
     def items(self):
         return sorted(
@@ -179,19 +185,21 @@ class Dimension(dict):
         if not isinstance(value, __class__): return NotImplemented
         return _get_operation(value, op)(self)
 
+    """__add__ and co only perform dimensionality check"""
     def __neg__(self):
         return self
         # return self.copy()
     def __add__(self, value):
         # if not isinstance(value, __class__): return NotImplemented
         dim = self.dim_of(value)
-        if self != dim: raise ConversionError.from_dims(self, dim)
+        if self != dim: raise DimensionError.from_dims(self, dim)
         return value
         # return value.copy()
     # def __radd__(self,value): return self.__r_binary_op(value, '__add__')
     def __radd__(self,value): return self.__add__(value)
     def __sub__(self,value):  return self.__add__(-value)
     def __rsub__(self,value): return (-self).__radd__(value)
+
     @functools.lru_cache(maxsize=32)
     def __mul__(self, value):
         if not isinstance(value, __class__): return NotImplemented
@@ -216,12 +224,12 @@ class Dimension(dict):
     def __rtruediv__(self,value):  return self.__r_binary_op(value, '__truediv__')
     def __floordiv__(self,value):
         if not isinstance(value, __class__): return NotImplemented
-        if self != value: raise ConversionError.from_dims(self, value)
+        if self != value: raise DimensionError.from_dims(self, value)
         return __class__.NODIM
     def __rfloordiv__(self,value): return self.__r_binary_op(value, '__floordiv__')
     def __mod__(self, value):
         if not isinstance(value, __class__): return NotImplemented
-        if self != value: raise ConversionError.from_dims(self, value)
+        if self != value: raise DimensionError.from_dims(self, value)
         return self
         # return value.copy()
     def __rmod__(self,value): return self.__rtruediv__(value)
@@ -242,7 +250,7 @@ class Dimension(dict):
         return super(__class__,self).__eq__(value)
     def __lt__(self, value):
         if not isinstance(value, __class__): return NotImplemented
-        if self != value: raise ConversionError.from_dims(self, value)
+        if self != value: raise DimensionError.from_dims(self, value)
         return NotImplemented
     def __le__(self,value): return self.__lt__(value)
     def __gt__(self,value): return self.__lt__(value)
@@ -294,7 +302,7 @@ class Unit(object):
     """Describes a physical unit. Should be immutable."""
     __match_args__ = ('scale','dim',)
     def __init__(self, *args, scale=Neutral.NEUTRAL, dim=Dimension.NODIM, **kwds):
-        """Create a new Unit with a dimention and a certain scale."""
+        """Create a new Unit with a dimension and a certain scale."""
         if not isinstance(dim, Dimension):
             dim = Dimension(dim)
         if kwds:
@@ -377,6 +385,7 @@ class Unit(object):
         return ans*hash(self.__class__)
 
     def __bool__(self) -> bool:
+        """Returns True if it is distinct from the unitary dimensionless unit."""
         return bool(self.dim) or self.scale not in (1,Neutral.NEUTRAL)
     def __repr__(self) -> str:
         return "{!s}[{!s} * {}]".format(
@@ -405,7 +414,7 @@ class Quantity(object):
     """Describes a certain amount of a given unit."""
     __match_args__ = ('amount','unit',)
     def __init__(self, *args, amount=Neutral.NEUTRAL, unit=Unit.SCALAR):
-        """Create a new Unit with a dimention and a certain scale."""
+        """Create a new Unit with a dimension and a certain scale."""
         for arg in args:
             if isinstance(arg, Dimension):
                 raise TypeError(
@@ -610,8 +619,34 @@ class Quantity(object):
         ans = self.copy()
         ans.amount = abs(ans.amount)
         return ans
-    def __nonzero__(self):
+    @_return_scalar
+    def __floor__(self):
+        import math
+        ans = self.copy()
+        ans.amount = math.floor(ans.amount)
+        return ans
+    @_return_scalar
+    def __ceil__(self):
+        import math
+        ans = self.copy()
+        ans.amount = math.ceil(ans.amount)
+        return ans
+    @_return_scalar
+    def __round__(self, ndigits=None):
+        ans = self.copy()
+        ans.amount = round(ans.amount, ndigits=ndigits)
+        return ans
+    def __int__(self) -> int:
+        ans = self.copy()
+        ans.convert(Unit.SCALAR)
+        return int(ans.amount)
+    def __float__(self) -> float:
+        ans = self.copy()
+        ans.convert(Unit.SCALAR)
+        return float(ans.amount)
+    def __bool__(self) -> bool:
         return bool(self.amount)
+    __nonzero__ = __bool__
 
     def __hash__(self) -> int:
         ans = hash(self.amount) + hash(self.unit)

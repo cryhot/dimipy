@@ -15,7 +15,7 @@ K_cd = Fraction("683") * (_.lm_/_.W_) # luminous efficacity at 540*THz_
 
 ħ = h / (2*math.pi) # reduced Planck constant
 R = N_A*k_B # gas constant
-zero_celcius = Fraction("273.15") * (_.K_) # 0°C
+zero_celsius = Fraction("273.15") * (_.K_) # 0°C
 
 g_0 = Fraction("9.80665") * (_.m_/_.s_**2) # standard Earth gravity
 

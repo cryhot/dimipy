@@ -44,7 +44,7 @@ Ra_ = si.K_ * Fraction("5/9") # Rankine
 zero_farenheit = Fraction("459.67") * (Ra_) # 0°F
 # to convert a temperature:
 # temp_farenheit = temp_kelvin_or_rankine -zero_farenheit
-# temp_farenheit = temp_celcius +zero_celcius-zero_farenheit
+# temp_farenheit = temp_celsius +zero_celsius-zero_farenheit
 
 # DERIVED UNITS
 mph_ = mi_/h_

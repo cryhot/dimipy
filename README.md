@@ -16,7 +16,7 @@ Basic rules for `Unit`, `Quantity` and other types operations:
 2. if the result of an operation is a `Quantity` whose Unit has no dimension and scale `1` (i.e. equal to `Unit.SCALAR`), the result is substituted with the quantity itself
 3. the result of **(A \* B)** has the **type of A** (so n\*`Unit` is a `Quantity` but `Unit`\*n is a new `Unit`),
 4. the result of **(A \+ B)** is a `Quantity` (unless A and B are both `Units`) and has the **unit of B** (`Quantity` + `Unit` gives the same quantity but converted in the given unit).
-  If either A or B is a `Dimension`, perform the dimention check without unit conversion, and return the other value.
+    If either A or B is a `Dimension`, perform the dimension check without unit conversion, and return the other value.
 
 
 ## Examples
@@ -34,18 +34,18 @@ The [SI base units](https://en.wikipedia.org/wiki/SI_base_unit) are based on 7 d
 - **`'M'`** for mass
 - **`'I'`** for electric current intensity
 - **`'Θ'`** for thermodynamic temperature
-- **`'M'`** for amount of substance
+- **`'N'`** for amount of substance
 - **`'J'`** for luminous intensity
 
 Those dimensions are used in the module [`unity.units.si`](units/si.py).
 You can still define your own arbitrary dimensions on top of that, like **`'$'`** or **`'people'`**.
 
-```py
+```python
 from unity.units import * # see source file for exhaustive list of standard units
 from unity.constants import c,G
 
-u_age       =      13.799e9*year_              # year_ is defined as (s_*31556925)
-u_radius    =m_+   c * u_age                   # checks that result is a length, unit will still be (m_*year_/s_) = (m_*31556925)
+u_age       =      13.799e9*y_                 # y_ is defined as (s_*31556925)
+u_radius    =m_+   c * u_age                   # checks that result is a length, unit will still be (m_*y_/s_) = (m_*31556925)
 u_crit_mass =kg_+  0.5 * c**2 / G * u_radius   # checks that result is a mass
 u_mass      =      1e53*kg_                    # https://en.wikipedia.org/wiki/Universe
 
@@ -58,7 +58,7 @@ print( u_mass / u_crit_mass  +0 ) # print it as a Unit.SCALAR
 
 ### Create your own dimensions, units and quantities
 
-```py
+```python
 # dimensions
 length = Dimension(L=1)
 speed  = Dimension(L=1, T=-1)
@@ -104,6 +104,22 @@ print( f"{time //h_ :n}:{time%h_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints 
 - [x] use fractions for Unit.scale
 - [ ] named units and composed units
 - [ ] non linear units (like celsius compared to Kelvin, or decibels) - If I have time and motivation
+  For temperatures, one can currently use:
+  
+  ```python
+  from unity.units.si import K_, zero_celsius
+  from unity.units.imperial import Ra_, zero_farenheit
+  T_absolute = 300.*K_
+  
+  T_celsius = 27.*K_  # use Kelvin instead of Celsius
+  T_celsius = T_absolute -zero_celsius
+  T_absolute = T_celsius +zero_celsius
+  
+  T_farenheit = 80.*Ra_  # use Rankine instead of Farenheit
+  T_farenheit = T_absolute -zero_farenheit
+  T_farenheit = T_celsius +zero_celsius-zero_farenheit
+  T_absolute = T_farenheit +zero_farenheit+K_  # if Kelvin desired
+  ```
 - [ ] :warning: I might change the name of the library/submodules in the future. `unity` is too overrated.
 
 
@@ -111,4 +127,4 @@ print( f"{time //h_ :n}:{time%h_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints 
 
 Jean-Raphaël Gaglione   < jr dot gaglione at yahoo dot fr >
 
-_If you are interested in thit project, do not hesitate to contact me!_
+_If you are interested in this project, do not hesitate to contact me!_
