@@ -1,4 +1,4 @@
-# Unity
+# Dimipy
 
 ## Description
 
@@ -37,12 +37,12 @@ The [SI base units](https://en.wikipedia.org/wiki/SI_base_unit) are based on 7 d
 - **`'N'`** for amount of substance
 - **`'J'`** for luminous intensity
 
-Those dimensions are used in the module [`unity.units.si`](units/si.py).
+Those dimensions are used in the module [`dimipy.units.si`](src/units/si.py).
 You can still define your own arbitrary dimensions on top of that, like **`'$'`** or **`'people'`**.
 
 ```python
-from unity.units import * # see source file for exhaustive list of standard units
-from unity.constants import c,G
+from dimipy.units import * # see source file for exhaustive list of standard units
+from dimipy.constants import c,G
 
 u_age       =      13.799e9*y_                 # y_ is defined as (s_*31556925)
 u_radius    =m_+   c * u_age                   # checks that result is a length, unit will still be (m_*y_/s_) = (m_*31556925)
@@ -98,10 +98,10 @@ print( f"{time //h_ :n}:{time%h_ //min_ :02n}:{time%min_ //s_ :02n}" ) # prints 
 ```
 
 ## Formats
-Several formatters are available  (see [`unity.formatters`](formatters.py) for available formatters).
+Several formatters are available  (see [`dimipy.formatters`](src/formatters.py) for available formatters).
 ```python
-from unity.units import *
-from unity.formatters import *
+from dimipy.units import *
+from dimipy.formatters import *
 quantity = 1.21*GW_
 print(Formatter().format(quantity))
 print(PrettyFormatter().format(quantity))
@@ -122,11 +122,11 @@ $1.21{\color{cyan}\left({10}^{9}\cdot\mathsf{M}\cdot\mathsf{L}^{2}\cdot\mathsf{T
 
 One can easily reconfigure default formatters.
 ```python
-import unity
-unity.params.update(
-	str_formatter=unity.formatters.PrettyFormatter(),   # for str()
-	repr_formatter=unity.formatters.PrettyFormatter(),  # for repr()
-	display_formatter=formatters.LatexFormatter(),      # for IPython
+import dimipy
+dimipy.params.update(
+	str_formatter=dimipy.formatters.PrettyFormatter(),                  # for str()
+	repr_formatter=dimipy.formatters.PrettyFormatter(),                 # for repr()
+	display_formatter=dimipy.formatters.LatexFormatter(),               # for IPython
 )
 ```
 
@@ -139,8 +139,8 @@ unity.params.update(
   For temperatures, one can currently use:
   
   ```python
-  from unity.units.si import K_, zero_celsius
-  from unity.units.imperial import Ra_, zero_farenheit
+  from dimipy.units.si import K_, zero_celsius
+  from dimipy.units.imperial import Ra_, zero_farenheit
   T_absolute = 300.*K_
   
   T_celsius = 27.*K_  # use Kelvin instead of Celsius
@@ -152,7 +152,6 @@ unity.params.update(
   T_farenheit = T_celsius +zero_celsius-zero_farenheit
   T_absolute = T_farenheit +zero_farenheit+K_  # if Kelvin desired
   ```
-- [ ] :warning: I might change the name of the library/submodules in the future. `unity` is too overrated.
 
 
 ## Contact
