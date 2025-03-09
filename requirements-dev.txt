@@ -1,0 +1,5 @@
+# install all requirements using a single command:
+# $ pip install -r requirements-dev.txt
+
+termcolor
+ipython

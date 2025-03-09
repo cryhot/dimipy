@@ -1,0 +1,4 @@
+# install all requirements using a single command:
+# $ pip install -r requirements.txt
+
+termcolor

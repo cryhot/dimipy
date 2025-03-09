@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dimipy"
+keywords = ["units-of-measure", "dimensional-analysis"]
+description = "library for dimensional analysis and unit conversion"
+authors = [
+  { name="Jean-Raphaël Gaglione", email="jr.gaglione@yahoo.fr" },
+]
+license = {file = "LICENSE"}
+# license = "MIT"
+# license-files = ["LICENSE"]
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.6"
+# https://pypi.org/classifiers/
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Utilities",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Manufacturing",
+]
+dynamic = [
+  "version",
+  "dependencies",
+  "optional-dependencies",
+]
+
+[tool.setuptools.packages.find]
+include = ["dimipy*"]
+exclude = ["tests*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "dimipy.__version__"}
+dependencies = {file = ["requirements.txt"]}
+optional-dependencies = {dev = { file = ["requirements-dev.txt"] }}
+
+[project.urls]
+Homepage = "https://github.com/cryhot/dimipy"
+Repository = "https://github.com/cryhot/dimipy.git"
+Issues = "https://github.com/cryhot/dimipy/issues"

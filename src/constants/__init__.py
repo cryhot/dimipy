@@ -5,7 +5,7 @@ from ..units import si as _
 
 from .math import *
 from .defined import *
-del Δv_Cs # who cares?
+del Δv_Cs # who cares?                                              # noqa: F821
 
 # m_u = ...
 G = 6.6743015e-11 * (_.N_*_.m_**2*_.kg_**-2) # Gravitational constant

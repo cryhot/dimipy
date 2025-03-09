@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+__version__ = "0.0.1"
 
 from fractions import Fraction
 # keys starting with "_" only have an effect at load time

@@ -1,12 +1,20 @@
 # Dimipy
 
-## Description
+<!-- ## Description -->
 
-unit library for python3
+Python3 library for dimensional analysis and unit conversion.
 
-## Content
+**pros:** easy to define custom units and constants, easy unit check and conversion (just use `+`).  
+**cons:** units are not named; only linear units are handled; currently not compatible with `numpy`, `pandas`, etc  
+
+[![License](https://img.shields.io/github/license/cryhot/dimipy?logo=git&logoColor=white&style=for-the-badge)](LICENSE)
+[![Python package](https://img.shields.io/github/actions/workflow/status/cryhot/dimipy/python-package.yml?branch=master&label=Python%20package&logo=github&logoColor=white&style=for-the-badge)](https://github.com/cryhot/dimipy/actions/workflows/python-package.yml)
+[![PyPI Version](https://img.shields.io/pypi/v/dimipy?logo=pypi&logoColor=white&style=for-the-badge)](https://pypi.org/project/dimipy/)
+
+## Content and Paradigm
 
 3 levels datastructure: `Dimension` - `Unit` - `Quantity`
+
 - `Dimension`: relates to a physical dimension (immutable)
 - `Unit`: describes a physical unit with it's scale (immutable)
 - `Quantity`: describes a certain amount of a given unit
