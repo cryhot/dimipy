@@ -11,6 +11,7 @@ Python3 library for dimensional analysis and unit conversion.
 [![License](https://img.shields.io/github/license/cryhot/dimipy?logo=git&logoColor=white&style=for-the-badge)](LICENSE "project license")
 [![Python package](https://img.shields.io/github/actions/workflow/status/cryhot/dimipy/python-package.yml?branch=master&label=package&logo=python&logoColor=white&style=for-the-badge)](https://github.com/cryhot/dimipy/actions/workflows/python-package.yml "GitHub action")
 [![PyPI Version](https://img.shields.io/pypi/v/dimipy?logo=pypi&logoColor=white&style=for-the-badge)](https://pypi.org/project/dimipy/ "PyPI project")
+[![demo notebook](https://img.shields.io/badge/jupyter-demo-%20?labelColor=gray&logo=jupyter&logoColor=white&color=F37626&style=for-the-badge)](https://mybinder.org/v2/gh/cryhot/dimipy/master?urlpath=%2Fdoc%2Ftree%2Fexamples%2Fdemo.ipynb "run Jupyter notebook online with Binder")
 
 ## Content and Paradigm
 
@@ -66,6 +67,9 @@ print( u_mass / u_crit_mass  +0 ) # print it as a Unit.SCALAR
 ```
 
 ### Create your own dimensions, units and quantities
+
+See also [demo.ipynb](examples/demo.ipynb#create-custom-dimensions-units-and-quantities)
+([![demo notebook](https://img.shields.io/badge/jupyter-demo-%20?labelColor=gray&logo=jupyter&logoColor=white&color=F37626&style=flat-square)](https://mybinder.org/v2/gh/cryhot/dimipy/master?urlpath=%2Fdoc%2Ftree%2Fexamples%2Fdemo.ipynb "run Jupyter notebook online with Binder")).
 
 #### `Dimension(**symbols)`<a id="dimension"></a>
 
