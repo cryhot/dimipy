@@ -5,19 +5,20 @@
 Python3 library for dimensional analysis and unit conversion.
 
 **pros:** easy to define custom units and constants, easy unit check and conversion (just use `+`).  
-**cons:** units are not named; only linear units are handled; currently not compatible with `numpy`, `pandas`, etc  
+**cons:** units are not named; only linear units are handled; currently barely compatible with `numpy`, `pandas`, etc  
 
-[![License](https://img.shields.io/github/license/cryhot/dimipy?logo=git&logoColor=white&style=for-the-badge)](LICENSE)
-[![Python package](https://img.shields.io/github/actions/workflow/status/cryhot/dimipy/python-package.yml?branch=master&label=Python%20package&logo=github&logoColor=white&style=for-the-badge)](https://github.com/cryhot/dimipy/actions/workflows/python-package.yml)
-[![PyPI Version](https://img.shields.io/pypi/v/dimipy?logo=pypi&logoColor=white&style=for-the-badge)](https://pypi.org/project/dimipy/)
+[![GitHub repo](https://img.shields.io/badge/cryhot%2Fdimipy-%20?labelColor=gray&logo=github&logoColor=white&color=darkgray&style=for-the-badge)](https://github.com/cryhot "home page on GitHub")
+[![License](https://img.shields.io/github/license/cryhot/dimipy?logo=git&logoColor=white&style=for-the-badge)](LICENSE "project license")
+[![Python package](https://img.shields.io/github/actions/workflow/status/cryhot/dimipy/python-package.yml?branch=master&label=package&logo=python&logoColor=white&style=for-the-badge)](https://github.com/cryhot/dimipy/actions/workflows/python-package.yml "GitHub action")
+[![PyPI Version](https://img.shields.io/pypi/v/dimipy?logo=pypi&logoColor=white&style=for-the-badge)](https://pypi.org/project/dimipy/ "PyPI project")
 
 ## Content and Paradigm
 
 3 levels datastructure: `Dimension` - `Unit` - `Quantity`
 
-- `Dimension`: relates to a physical dimension (immutable)
-- `Unit`: describes a physical unit with it's scale (immutable)
-- `Quantity`: describes a certain amount of a given unit
+- [`Dimension`](#dimension): relates to a physical dimension (immutable)
+- [`Unit`](#unit): describes a physical unit with it's scale (immutable)
+- [`Quantity`](#quantity): describes a certain amount of a given unit
 
 Basic rules for `Unit`, `Quantity` and other types operations:
 1. an ordinary object is considered as a `Quantity` object whose Unit is `Unit.SCALAR` (no dimension, scale `1`),
@@ -32,7 +33,7 @@ Basic rules for `Unit`, `Quantity` and other types operations:
 ### Predefined units and constants
 
 <p align="center">
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SI_base_units.svg/256px-SI_base_units.svg.png">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/SI_base_units.svg/256px-SI_base_units.svg.png" height="180" alt="the 7 SI base dimensions">
 </p>
 
 The [SI base units](https://en.wikipedia.org/wiki/SI_base_unit) are based on 7 dimensions of measurement:
@@ -66,13 +67,16 @@ print( u_mass / u_crit_mass  +0 ) # print it as a Unit.SCALAR
 
 ### Create your own dimensions, units and quantities
 
+#### `Dimension(**symbols)`<a id="dimension"></a>
+
 ```python
-# dimensions
 length = Dimension(L=1)
 speed  = Dimension(L=1, T=-1)
 acceleration = Dimension( {'L':1, 'T':-2} )
+```
 
-# units
+#### `Unit(scale:Numeric, dim:Dimension)`<a id="unit"></a>
+```python
 m_    = Unit(scale=1, dim=length)       # a unit is composed of a dimension and a scale
 km_   = Unit(scale=1000, dim=length)    # scale is relative to the SI-unit
 kn_   = Unit(0.514444,speed)            # the knot definition
@@ -85,8 +89,10 @@ km_h_ = km_ / h_        # equivalent to Unit(1000/3600, speed)
 N_    = Unit(M=1,L=1,T=-2)
 J_    = Unit(M=1,L=2,T=-2) +N_*m_ # checks the compatibility of units (homogeneity)
 W_    = Unit(M=1,L=2,T=-3) +J_/s_ # actually, W_ takes the value of (J_/s_), the last term
+```
 
-# quantities
+#### `Quantity(amount:Numeric, unit:Unit)`<a id="quantity"></a>
+```python
 g = Quantity(amount=9.81, unit=m_*s_**-2)  # a quantity is composed of a unit and an amount
 c = 299792458 * (m_/s_)             # ((m_/s_) MUST be on right)
 sun_earth = (8*min_ + 20*s_) / c    # operation between quantities (result is a distance)
@@ -113,26 +119,28 @@ from dimipy.formatters import *
 quantity = 1.21*GW_
 print(Formatter().format(quantity))
 print(PrettyFormatter().format(quantity))
-print(LegacyFormatter().format(quantity))
+print(PrettyFormatter(amount_spacing=" ",dim_spacing="⋅").format(quantity))
+print(LegacyFormatter(unit_color=False).format(quantity))
 print(CodeFormatter().format(quantity))
 print(CodeFormatter(explicit_type=True).format(quantity))
-print(LatexFormatter(dim_spacing=r"\cdot").format(quantity))
+print(LatexFormatter(amount_spacing=r"\ ",dim_spacing=r"\cdot").format(quantity))
 ```
 This prints:
 ```console
-1.21(10^9 M L^2 T^-3)
+1.21 (10^9 M L^2 T^-3)
 1.21(10⁹ML²T⁻³)
+1.21 (10⁹⋅M⋅L²⋅T⁻³)
 Quantity[1.21 * (10⁹ * M L² T⁻³)]
 1.21 * Unit(Fraction(1000000000, 1), M=1, L=2, T=-3)
 Quantity(1.21, Unit(Fraction(1000000000, 1), M=1, L=2, T=-3))
-$1.21{\color{cyan}\left({10}^{9}\cdot\mathsf{M}\cdot\mathsf{L}^{2}\cdot\mathsf{T}^{-3}\right)}$
+$1.21\ {\color{cyan}\left({10}^{9}\cdot\mathsf{M}\cdot\mathsf{L}^{2}\cdot\mathsf{T}^{-3}\right)}$
 ```
 
 One can easily reconfigure default formatters.
 ```python
 import dimipy
 dimipy.params.update(
-	str_formatter=dimipy.formatters.PrettyFormatter(),                  # for str()
+	str_formatter=dimipy.formatters.PrettyFormatter(unit_color=False),  # for str()
 	repr_formatter=dimipy.formatters.PrettyFormatter(),                 # for repr()
 	display_formatter=dimipy.formatters.LatexFormatter(),               # for IPython
 )

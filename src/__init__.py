@@ -12,11 +12,11 @@ params = dict(
     unit_color="cyan",       # default color for Formatters
     unwrap_scalar=True,  # return quantity when unit is Unit.SCALAR
     # UNITS
-    _unitary_scale=Fraction(1),  # for unity.units.*
+    _unitary_scale=Fraction(1),  # for .units.*
     _dim_angle=dict(A=1),  # use dict() for dimensionless unit
     _dim_amount_of_substance=dict(N=1),  # use dict() for dimensionless unit
     # CONSTANTS
-    _unitary_amount=Fraction(1),  # for unity.constants.defined.*
+    _unitary_amount=Fraction(1),  # for .constants.defined.*
 )
 del Fraction
 

@@ -10,7 +10,7 @@ from .core import Dimension, Unit, Quantity
 
 class Formatter():
     _defaults = dict(
-        dim_spacing = " ",
+        dim_spacing = " ",  # str: custom spacing
         amount_spacing = None,  # None: same as dim_spacing, str: custom spacing
         unit_color = True,  # False: deactivate, True: use params['unit_color'], str: custom color
         fractions = True, # None: allow native fractions, True: inference allowed, False: disable fractions
