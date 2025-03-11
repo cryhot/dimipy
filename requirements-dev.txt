@@ -3,3 +3,8 @@
 
 termcolor
 ipython
+
+flake8
+pytest
+pytest-check
+pytest-cov

@@ -7,11 +7,12 @@ Python3 library for dimensional analysis and unit conversion.
 **pros:** easy to define custom units and constants, easy unit check and conversion (just use `+`).  
 **cons:** units are not named; only linear units are handled; currently barely compatible with `numpy`, `pandas`, etc  
 
-[![GitHub repo](https://img.shields.io/badge/cryhot%2Fdimipy-%20?labelColor=gray&logo=github&logoColor=white&color=darkgray&style=for-the-badge)](https://github.com/cryhot "home page on GitHub")
-[![License](https://img.shields.io/github/license/cryhot/dimipy?logo=git&logoColor=white&style=for-the-badge)](LICENSE "project license")
-[![Python package](https://img.shields.io/github/actions/workflow/status/cryhot/dimipy/python-package.yml?branch=master&label=package&logo=python&logoColor=white&style=for-the-badge)](https://github.com/cryhot/dimipy/actions/workflows/python-package.yml "GitHub action")
-[![PyPI Version](https://img.shields.io/pypi/v/dimipy?logo=pypi&logoColor=white&style=for-the-badge)](https://pypi.org/project/dimipy/ "PyPI project")
-[![demo notebook](https://img.shields.io/badge/jupyter-demo-%20?labelColor=gray&logo=jupyter&logoColor=white&color=F37626&style=for-the-badge)](https://mybinder.org/v2/gh/cryhot/dimipy/master?urlpath=%2Fdoc%2Ftree%2Fexamples%2Fdemo.ipynb "run Jupyter notebook online with Binder")
+[![GitHub repo](https://img.shields.io/badge/cryhot%2Fdimipy-%20?labelColor=gray&logo=github&logoColor=white&color=darkgray&style=flat-square)](https://github.com/cryhot "home page on GitHub")
+[![License](https://img.shields.io/github/license/cryhot/dimipy?logo=git&logoColor=white&style=flat-square)](LICENSE "project license")
+[![Python package](https://img.shields.io/github/actions/workflow/status/cryhot/dimipy/python-package.yml?branch=master&label=package&logo=python&logoColor=white&style=flat-square)](https://github.com/cryhot/dimipy/actions/workflows/python-package.yml "GitHub action")
+[![codecov](https://img.shields.io/codecov/c/github/cryhot/dimipy/master?logo=codecov&logoColor=white&style=flat-square)](https://codecov.io/github/cryhot/dimipy "code coverage")
+[![PyPI Version](https://img.shields.io/pypi/v/dimipy?logo=pypi&logoColor=white&style=flat-square)](https://pypi.org/project/dimipy/ "PyPI project")
+[![demo notebook](https://img.shields.io/badge/jupyter-demo-%20?labelColor=gray&logo=jupyter&logoColor=white&color=F37626&style=flat-square)](https://mybinder.org/v2/gh/cryhot/dimipy/master?urlpath=%2Fdoc%2Ftree%2Fexamples%2Fdemo.ipynb "run Jupyter notebook online with Binder")
 
 ## Content and Paradigm
 
