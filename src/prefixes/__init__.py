@@ -13,5 +13,6 @@ from .metric import *
 __all__ = [
     k
     for k,v in globals().items()
+    if not k.startswith("_")
     if v.__class__.__name__ != 'module'  # don't import submodules with *
 ]

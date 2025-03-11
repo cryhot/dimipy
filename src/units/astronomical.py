@@ -19,12 +19,12 @@ pc_ = au_/(angle.arcsec_/angle.rad_) # parsec
 kpc_ = _.k*pc_
 Mpc_ = _.M*pc_
 Gpc_ = _.G*pc_
-LD_ = Δ_EL_ = 3.84399e8 * m_ # Δ_⊕L, Lunar distance, ≈
+LD_ = Δ_EL_ = m_ * 3.84399e8 # Δ_⊕L, Lunar distance, ≈
 
 # MASS
-M_E_ = M_earth_ = 1.988e30 * si.kg_ # M_☉, solar mass, ≈
-M_J_ = M_jupiter_ = 1.89813e27 * si.kg_ # M_♃, Jupiter mass, ≈
-M_S_ = M_sun_ = 5.9722e24 * si.kg_ # M_⊕, Earth mass, ≈
+M_E_ = M_earth_ = si.kg_ * 1.988e30 # M_☉, solar mass, ≈
+M_J_ = M_jupiter_ = si.kg_ * 1.89813e27 # M_♃, Jupiter mass, ≈
+M_S_ = M_sun_ = si.kg_ * 5.9722e24 # M_⊕, Earth mass, ≈
 
 del Fraction
 del _
